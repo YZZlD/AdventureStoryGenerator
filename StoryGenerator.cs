@@ -1,10 +1,10 @@
+using System.Runtime.CompilerServices;
+using System.Text.RegularExpressions;
+
 namespace AdventureStoryGenerator
 {
     public class StoryGenerator
     {
-        private Dictionary<string, string> _templateMappingDictionary;
-        private List<string> _templateList;
-
         public string ReadTemplate()
         {
             string template = "";
@@ -30,9 +30,41 @@ namespace AdventureStoryGenerator
             
         }
 
-        public void GetUserInputs()
+        public void GetUserInputs(string template, ref Dictionary<string, string> templateMappingDict)
         {
-            
+            List<string> words = template.Split(' ').ToList<string>();
+            List<string> placeholders = new List<string>();
+
+            foreach(string word in words)
+            {
+                if(word[0] == '{' && !placeholders.Contains(formatPlaceholder(word)))
+                {
+                    string formattedWord = formatPlaceholder(word);
+                    formattedWord = formattedWord.Replace("_", " ");
+                    formattedWord = formattedWord.Replace("{", "");
+                    formattedWord = formattedWord.Replace("}", "");
+                    placeholders.Add(formatPlaceholder(word));
+                    string value = "";
+
+                    if ("aeiouy".Contains(formattedWord[0]))
+                    {
+                        Console.Write($"Enter an {formattedWord}: ");
+                        value = Console.ReadLine();
+                    } else
+                    {
+                        Console.Write($"Enter a {formattedWord}: ");
+                        value = Console.ReadLine();
+                    }
+                    templateMappingDict.Add(formatPlaceholder(word), value);
+                }
+            }
+        }
+
+        private static string formatPlaceholder(string word)
+        {
+            Regex pattern = new Regex("[,.!;'?)(]");
+            string formattedWord = pattern.Replace(word, "");
+            return formattedWord;
         }
     }
 }
