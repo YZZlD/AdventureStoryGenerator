@@ -8,15 +8,13 @@ namespace AdventureStoryGenerator
         {
             Dictionary<string, string> templateMappingDictionary = new Dictionary<string, string>();
             string template = "";
+            string story = "";
 
             StoryGenerator sg = new StoryGenerator();
             template = sg.ReadTemplate();
             sg.GetUserInputs(template, ref templateMappingDictionary);
-
-            foreach(KeyValuePair<string, string> mappingPair in templateMappingDictionary)
-            {
-                Console.WriteLine(mappingPair.Key + ": " + mappingPair.Value);
-            }
+            story = sg.GenerateStory(template, templateMappingDictionary);
+            sg.SaveStory(story);
         }
     }
 }

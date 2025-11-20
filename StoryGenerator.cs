@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 
 namespace AdventureStoryGenerator
@@ -20,14 +21,24 @@ namespace AdventureStoryGenerator
             return template;
         }
 
-        public string GenerateStory()
+        public string GenerateStory(string template, Dictionary<string, string> templateMappingDict)
         {
-            return "";
+            string story = template;
+
+            foreach(KeyValuePair<string, string> mappingPair in templateMappingDict)
+            {
+                story = story.Replace(mappingPair.Key, mappingPair.Value);
+            }
+
+            return story;
         }
 
-        public void SaveStory()
+        public void SaveStory(string story)
         {
-            
+            Console.Write("Enter a filename to save your story: ");
+            string filename = Console.ReadLine();
+            File.WriteAllText(Path.Combine(Directory.GetCurrentDirectory(), $"output/{filename}"), story);
+            Console.WriteLine($"The story is successfully saved to {Path.Combine(Directory.GetCurrentDirectory(),$"output/{filename}" )}");
         }
 
         public void GetUserInputs(string template, ref Dictionary<string, string> templateMappingDict)
