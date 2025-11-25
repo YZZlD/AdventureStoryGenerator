@@ -1,22 +1,36 @@
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+//TODO: ADD COMMENTS AND VALIDATION
+
+using System.Data;
 using System.Text.RegularExpressions;
 
 namespace AdventureStoryGenerator
 {
     public class StoryGenerator
     {
-        public string ReadTemplate()
+        public string ReadTemplate(string fileName)
         {
             string template = "";
-            using(StreamReader sr = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), "templates/story_template.txt")))
+            try
             {
-                string line;
-                while((line = sr.ReadLine()) != null)
+                using(StreamReader sr = new StreamReader(Path.Combine(Directory.GetCurrentDirectory(), $"templates\\{fileName}")))
                 {
-                    template += line;
+                    string line;
+                    while((line = sr.ReadLine()) != null)
+                    {
+                        template += line;
+                    }
                 }
+            }catch(FileNotFoundException fnfe)
+            {
+                Console.WriteLine($"File could not be found at " + Path.Combine(Directory.GetCurrentDirectory(), $"templates\\{fileName}"));
+                Environment.Exit(-1);
             }
+            catch(IOException ioe)
+            {
+                Console.WriteLine($"File at {Path.Combine(Directory.GetCurrentDirectory(), $"templates\\{fileName}")} was busy.");
+                Environment.Exit(-1);
+            }
+            
             Console.WriteLine(template);
             return template;
         }
@@ -57,15 +71,35 @@ namespace AdventureStoryGenerator
                     placeholders.Add(formatPlaceholder(word));
                     string value = "";
 
-                    if ("aeiouy".Contains(formattedWord[0]))
+                    while(true)
                     {
-                        Console.Write($"Enter an {formattedWord}: ");
-                        value = Console.ReadLine();
-                    } else
-                    {
-                        Console.Write($"Enter a {formattedWord}: ");
-                        value = Console.ReadLine();
+                        if ("aeiouy".Contains(formattedWord[0]))
+                        {
+                            Console.Write($"Enter an {formattedWord}: ");
+                        } else
+                        {
+                            Console.Write($"Enter a {formattedWord}: ");
+                        }
+
+                        try
+                        {
+                            value = Console.ReadLine();
+
+                            if(value == null) throw new NoNullAllowedException();
+                            if(value.Trim().Length == 0) throw new Exception("Input cannot be blank.");
+
+                            break;
+                        }catch(NoNullAllowedException nnae)
+                        {
+                            Console.WriteLine("Input cannot be null.");
+                        }catch(Exception e)
+                        {
+                            Console.WriteLine(e.Message);
+                        }
                     }
+                    
+                    
+
                     templateMappingDict.Add(formatPlaceholder(word), value);
                 }
             }

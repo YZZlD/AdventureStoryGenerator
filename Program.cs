@@ -1,4 +1,5 @@
-﻿using System.Data.SqlTypes;
+﻿
+//TODO: ADD COMMENTS ADD VALIDATION
 
 namespace AdventureStoryGenerator
 {
@@ -11,7 +12,7 @@ namespace AdventureStoryGenerator
             string story = "";
 
             StoryGenerator sg = new StoryGenerator();
-            template = sg.ReadTemplate();
+            template = sg.ReadTemplate("story_template.txt");
             sg.GetUserInputs(template, ref templateMappingDictionary);
             story = sg.GenerateStory(template, templateMappingDictionary);
             sg.SaveStory(story);
